@@ -1,3 +1,7 @@
+Env:
+1.  Venv name = twit3
+2.  Run tests = django-admin test tests.test_tweetsreport
+
 Done:
 1.  Create virtualenvs & edit postactivate & postdeactivate scripts with
     DJANGO_SETTINGS_MODULE & PYTHONPATH env variables
@@ -7,15 +11,48 @@ Done:
 4.  Get arguments for loadtweets command and validate user against project db
 5.  Create report for tweetsreport command
 6.  Configure EMAIL_BACKEND in twitter_commands/settings.py & implement email
-
+7.  Implement loadtweets command using tweepy
+    a.  Use tweepy wrapper - needs to use OAuth
+    
 To do:
--   Install + add tweepy?
-1.  Implement loadtweets command using tweepy
-    a.  Use tweepy wrapper
-    b.  API limits tweets returned to 200 at a time -- notify user on a 
-        larger request, or handle silently?
-2.  Implement CRON job to run tweetsreport command on specific schedule
+1.  Implement CRON job to run tweetsreport command on specific schedule
     a.  Set project environment variables in the scope of the command only
 
 Questions:
-1.  
+1.  Should the OAuth be in its own function for both commands to use or will the
+    token be re-used?
+2.  TwitterAPI limits tweets returned to 200 at a time.  We handle larger
+    requests by silently dropping to 200.  Is that bad form?
+3.  WHY WON'T CRONTAB WORK?
+
+
+Twitter API Access Token:
+89374840-9UzAxJjZBQWO3Diq2EaxE6R3egX1UBtu3DyE07p4g
+
+Twitter API Access Token Secret:
+Do4OVXgrNT24QFdz3b0PFGUh9QB1uno53dT549FIbFkgV
+
+Twitter API Access Level:
+Read and write
+
+Owner:
+gooberwonder
+(lol <3)  don't be jealous!
+
+Owner ID:
+89374840
+
+
+CRON job steps:
+1.  Run crontab
+    crontab -e
+2.  Select an editor (nano, cause I know how to use it)
+    1
+3.  Add a line to the crontab conf to configure the job run times and the commands to be run
+    0 21 * * 0,6 PYTHONPATH=/home/ubuntu/workspace/twitter_commands DJANGO_SETTINGS_MODULE=twitter_commands.settings /home/ubuntu/.virtualenvs/twit3/bin/python /home/ubuntu/workspace/twitter_commands/manage.py tweetsreport
+
+# Ran this from the terminal w/o the venv activated, and it worked fine
+PYTHONPATH=/home/ubuntu/workspace/twitter_commands DJANGO_SETTINGS_MODULE=twitter_commands.settings /home/ubuntu/.virtualenvs/twit3/bin/python /home/ubuntu/workspace/twitter_commands/manage.py tweetsreport >> /home/ubuntu/workspace/phil.test
+
+# Disable email to crontab user
+2>&1
